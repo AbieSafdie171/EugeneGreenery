@@ -1,0 +1,46 @@
+body { 
+    margin:0; 
+    padding:0; 
+}
+
+
+#map { 
+    position:absolute; 
+    top:0; 
+    bottom:0; 
+    width:100%; 
+}
+
+#reset-zoom { 
+    position: absolute; 
+    top: 10px; 
+    left: 10px; 
+    background: #007030;    /* uo green */
+    color: #FEE11A; /* uo yellow */
+    border: none; 
+    padding: 10px; 
+    border-radius: 5px; /* Rounded edges */
+    cursor: pointer; }
+
+#reset-zoom:hover { 
+    background: #005f24;    /* Darker shade of green on hover */
+    cursor: pointer; 
+}
+
+
+.mapboxgl-ctrl-compass {
+    display: none !important; /* Use !important to ensure it overrides other styles */
+}
+
+.mapboxgl-ctrl {
+    background-color: #007030;  /* uo green */
+    border-radius: 5px; /* Rounded edges */
+}
+
+
+
+
+
+
+
+
