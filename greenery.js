@@ -353,7 +353,7 @@ function panelSelect(e){
       document.getElementById('glyph').className = "chevron glyphicon glyphicon-chevron-up";
       state.panelOpen = false;
     } else {
-      document.getElementById('descriptionPanel').style.height = '450px';
+      document.getElementById('descriptionPanel').style.height = '455px';
       document.getElementById('glyph').className = "chevron glyphicon glyphicon-chevron-down";
       state.panelOpen = true;
     }

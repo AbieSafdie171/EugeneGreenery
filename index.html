@@ -26,10 +26,9 @@
   <div id='map'></div>
   <button id="reset-zoom">Reset Zoom</button>
 
-   <div class="descriptionPanel" id="descriptionPanel" style="height: 450px;">
+   <div class="descriptionPanel" id="descriptionPanel" style="height: 455px;">
      <span onClick="panelSelect()" id="glyph" class="chevron glyphicon glyphicon-chevron-down"></span>
      <hr />
-     <h4 class="panelTitle">WHAT AM I LOOKING AT?</h4>
      <div class="panelText">
        <p>This map shows urban tree coverage in the City of Eugene.</p>
        <p>The city is divided into 1 km² grid blocks. Each block is given a tree score based on the following characteristics:</p>
@@ -40,6 +39,8 @@
       + (450 × (Total Parks ≤ 1))
       + (25 × (Total Parks > 1))
       + (10 × Total Species)
+(Note: Score is then normalized 
+on a 0-100 scale)
        </pre>
       <p><b>Data Source:</b> https://mapping.eugene-or.gov/</p>
      </div>
