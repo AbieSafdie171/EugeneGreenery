@@ -18,12 +18,83 @@
 
  </head>
  <body>
+  
+
+  <div id="title-bar">Eugene Urban Tree Coverage Map</div>
 
   <!-- This is the map div :) -->
   <div id='map'></div>
-  <button id="reset-zoom">Reset Map</button>
+  <button id="reset-zoom">Reset Zoom</button>
 
-   
+   <div class="descriptionPanel" id="descriptionPanel" style="height: 450px;">
+     <span onClick="panelSelect()" id="glyph" class="chevron glyphicon glyphicon-chevron-down"></span>
+     <hr />
+     <h4 class="panelTitle">WHAT AM I LOOKING AT?</h4>
+     <div class="panelText">
+       <p>This map shows urban tree coverage in the City of Eugene.</p>
+       <p>The city is divided into 1 km² grid blocks. Each block is given a tree score based on the following characteristics:</p>
+       <p class="equationLabel"><strong>Scoring Formula:</strong></p>
+       <pre class="equationBlock">Score = (0.1 × Total Spread)
+      + (0.05 × Total Height)
+      + (1 × Total Trees)
+      + (450 × (Total Parks ≤ 1))
+      + (25 × (Total Parks > 1))
+      + (10 × Total Species)
+       </pre>
+      <p><b>Data Source:</b> https://mapping.eugene-or.gov/</p>
+     </div>
+   </div>
+
+
+   <div class="LegendContainer">
+     <div class="legendTitle">Score: </div>
+
+     <div class="legendItem">
+       <span class="legendColorBox" style="background-color: #7f001c;"></span>
+       <span class="layerDescription">0–9</span>
+     </div>
+     <div class="legendItem">
+       <span class="legendColorBox" style="background-color: #a50026;"></span>
+       <span class="layerDescription">10–19</span>
+     </div>
+     <div class="legendItem">
+       <span class="legendColorBox" style="background-color: #da372a;"></span>
+       <span class="layerDescription">20–29</span>
+     </div>
+     <div class="legendItem">
+       <span class="legendColorBox" style="background-color: #f67b4a;"></span>
+       <span class="layerDescription">30–39</span>
+     </div>
+     <div class="legendItem">
+       <span class="legendColorBox" style="background-color: #fdbf6f;"></span>
+       <span class="layerDescription">40–49</span>
+     </div>
+     <div class="legendItem">
+       <span class="legendColorBox" style="background-color: #feeea2;"></span>
+       <span class="layerDescription">50–59</span>
+     </div>
+     <div class="legendItem">
+       <span class="legendColorBox" style="background-color: #eaf6a2;"></span>
+       <span class="layerDescription">60–69</span>
+     </div>
+     <div class="legendItem">
+       <span class="legendColorBox" style="background-color: #b7e075;"></span>
+       <span class="layerDescription">70–79</span>
+     </div>
+     <div class="legendItem">
+       <span class="legendColorBox" style="background-color: #74c365;"></span>
+       <span class="layerDescription">80–89</span>
+     </div>
+     <div class="legendItem">
+       <span class="legendColorBox" style="background-color: #229c52;"></span>
+       <span class="layerDescription">90–99</span>
+     </div>
+     <div class="legendItem">
+       <span class="legendColorBox" style="background-color: #006837;"></span>
+       <span class="layerDescription">100</span>
+     </div>
+   </div>
+
 
 
   <!-- js file -->

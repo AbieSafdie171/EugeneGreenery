@@ -3,17 +3,34 @@ body {
     padding:0; 
 }
 
+#title-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background-color: #44a04c;  /* match your green theme */
+  color: #000000;             /* black text */
+  font-family: sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 40px;          /* center text vertically */
+  text-align: center;
+  z-index: 9999;              /* keep on top */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
 
 #map { 
-    position:absolute; 
-    top:0; 
-    bottom:0; 
-    width:100%; 
+  position: absolute;
+  top: 40px;  /* height of title bar */
+  bottom: 0;
+  width: 100%;
 }
 
 #reset-zoom { 
     position: absolute; 
-    top: 10px; 
+    top: 50px; 
     left: 10px; 
     background: #44a04c;    /* green */
     color: #000000; /* uo yellow */
@@ -37,7 +54,101 @@ body {
     border-radius: 5px; /* Rounded edges */
 }
 
+.LegendContainer {
+  position: absolute;
+  bottom: 30px;
+  left: 20px;
+  z-index: 2;
+  background: #44a04c;
+  padding: 10px;
+  border-radius: 7px;
 
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* center items horizontally */
+  gap: 8px; /* space between items */
+  max-width: 300px;
+}
+
+.legendTitle {
+  width: 100%;
+  text-align: center;
+  color: black;
+  font-weight: bold;
+  font-family: sans-serif;
+  margin-bottom: 8px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legendColorBox {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.layerDescription {
+  color: black;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+
+/*  style for items with the class "descriptionPanel" */
+.descriptionPanel {
+    position: absolute;
+    bottom: 165px;
+    left: 20px;
+    z-index: 2;
+    width: 300px;
+    height: 40px;
+    background: #44a04c;
+    transition: width 2s, height 2s;
+    overflow: hidden;
+    border-radius: 7px;
+}
+
+.panelTitle {
+  text-align: center;
+  color: black;
+  margin-top: 5px;
+  font-family: sans-serif;
+}
+
+.panelText {
+  margin: 10px;
+  color: black;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+.equationLabel {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.equationBlock {
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 6px;
+  white-space: pre;
+  font-family: monospace;
+  font-size: 13px;
+  color: #000000;
+}
+/* style for items with the class "chevron" */
+.chevron {
+     position: relative;
+     margin-left: 45%;
+     font-size: x-large;
+     color: black;
+}
 
 
 #filters {
@@ -57,6 +168,31 @@ body {
   margin-left: 4px;
 }
 
+/* Popup container */
+.mapboxgl-popup {
+  font-family: sans-serif;
+  font-size: 13px;
+  border-radius: 5px;
+  border: none;
+}
 
+/* Popup content box */
+.mapboxgl-popup-content {
+  background: #44a04c;       /* green background */
+  color: #000000;            /* black text */
+  padding: 10px 15px;
+  border-radius: 5px;
+  box-shadow: none;          /* remove default shadow */
+}
+
+/* Popup tip (the arrow) */
+.mapboxgl-popup-tip {
+  border-top-color: #44a04c; /* same green as popup background */
+}
+
+/* Optional: style links or strong tags inside the popup */
+.mapboxgl-popup-content strong {
+  color: #000000; /* yellow from your color palette */
+}
 
 
