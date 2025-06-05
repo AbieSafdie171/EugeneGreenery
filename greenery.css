@@ -151,7 +151,8 @@ body {
   background: #44a04c;
   padding: 10px;
   border-radius: 4px;
-  max-height: 200px;
+  max-height: 575px;
+  max-width: 400px;
   overflow-y: auto;
   font-family: sans-serif;
   font-size: 13px;

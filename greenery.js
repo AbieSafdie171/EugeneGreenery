@@ -59,26 +59,6 @@ function getTopSpecies(data, topN = 5) {
   return { topSpecies, otherSpecies, counts };
 }
 
-function countOther(data) {
-  let count = 0;
-  const knownTypes = [
-    "Pseudotsuga menziesii - Douglas fir",
-    "Acer rubrum - red maple",
-    "Quercus garryana - Oregon white oak",
-    "Acer macrophyllum - bigleaf maple",
-    "Acer platanoides - Norway maple"
-  ];
-
-  data.features.forEach(f => {
-    const species = f.properties.Tree_species;
-    if (!knownTypes.includes(species)) {
-      count++;
-    }
-  });
-
-  return count;
-}
-
 // ------------------------------------------------------------------------
 // MAP LOAD EVENT
 
@@ -165,86 +145,194 @@ map.on('load', () => {
   });
 
   // Species filtering UI
-  const { topSpecies, otherSpecies, counts } = getTopSpecies(treesData, 5);
-  const filterContainer = document.getElementById('filters');
-  const selectedSpecies = new Set();
+// Species filtering UI
+const { topSpecies, otherSpecies, counts } = getTopSpecies(treesData, 100);
+const filterContainer = document.getElementById('filters');
+const selectedSpecies = new Set();
 
-  // Create checkboxes for top species
-  topSpecies.forEach(species => {
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.id = species;
-    checkbox.value = species;
-    checkbox.checked = false;
-    updateTreeFilter();
+const searchInput = document.createElement('input');
+searchInput.type = 'text';
+searchInput.placeholder = 'Search species...';
+searchInput.style.width = '100%';
+searchInput.style.marginBottom = '8px';
+searchInput.style.padding = '4px';
 
-    const label = document.createElement('label');
-    label.setAttribute('for', species);
-    label.textContent = `${species} (${counts[species]})`;
+const dropdown = document.createElement('div');
+dropdown.style.maxHeight = '150px';
+dropdown.style.overflowY = 'auto';
+dropdown.style.background = '#fff';
+dropdown.style.border = '1px solid #ccc';
+dropdown.style.display = 'none';
+dropdown.style.position = 'relative';
+dropdown.style.zIndex = '10';
 
-    filterContainer.appendChild(checkbox);
-    filterContainer.appendChild(label);
-    filterContainer.appendChild(document.createElement('br'));
+filterContainer.appendChild(searchInput);
+filterContainer.appendChild(dropdown);
 
-    checkbox.addEventListener('change', () => {
-      if (checkbox.checked) {
-        selectedSpecies.add(species);
-      } else {
-        selectedSpecies.delete(species);
-      }
-      updateTreeFilter();
-    });
-  });
+// --- Select/Deselect All at the top ---
+const select_all_box = document.createElement('input');
+select_all_box.type = 'checkbox';
+select_all_box.id = 'select-all';
+select_all_box.value = '__SELECT-ALL__';
+select_all_box.checked = false;
 
-  // Create checkbox for "Other" species
-  const otherCheckbox = document.createElement('input');
-  otherCheckbox.type = 'checkbox';
-  otherCheckbox.id = 'other-species';
-  otherCheckbox.value = '__OTHER__';
-  otherCheckbox.checked = false;
+const selectAllLabel = document.createElement('label');
+selectAllLabel.setAttribute('for', 'select-all');
+selectAllLabel.textContent = `Select/Deselect All`;
+
+filterContainer.appendChild(select_all_box);
+filterContainer.appendChild(selectAllLabel);
+filterContainer.appendChild(document.createElement('br'));
+
+// Hold references to checkboxes for toggling
+const speciesCheckboxes = {};
+
+// Create checkboxes for top species
+topSpecies.forEach(species => {
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.id = species;
+  checkbox.value = species;
+  checkbox.checked = false;
+  speciesCheckboxes[species] = checkbox;
   updateTreeFilter();
 
-  const otherLabel = document.createElement('label');
-  otherLabel.setAttribute('for', 'other-species');
-  otherLabel.textContent = `Other (${countOther(treesData)})`;
+  const label = document.createElement('label');
+  label.setAttribute('for', species);
+  label.textContent = `${species} (${counts[species]})`;
 
-  filterContainer.appendChild(otherCheckbox);
-  filterContainer.appendChild(otherLabel);
+  filterContainer.appendChild(checkbox);
+  filterContainer.appendChild(label);
   filterContainer.appendChild(document.createElement('br'));
 
-  otherCheckbox.addEventListener('change', () => {
-    if (otherCheckbox.checked) {
-      selectedSpecies.add('__OTHER__');
+  checkbox.addEventListener('change', () => {
+    if (checkbox.checked) {
+      selectedSpecies.add(species);
     } else {
-      selectedSpecies.delete('__OTHER__');
+      selectedSpecies.delete(species);
     }
     updateTreeFilter();
   });
+});
 
-  // Update tree filter function
-  function updateTreeFilter() {
-    const activeSpecies = [];
+// Create checkbox for "Other" species
+const otherCheckbox = document.createElement('input');
+otherCheckbox.type = 'checkbox';
+otherCheckbox.id = 'other-species';
+otherCheckbox.value = '__OTHER__';
+otherCheckbox.checked = false;
+speciesCheckboxes['__OTHER__'] = otherCheckbox;
+updateTreeFilter();
 
-    if (topSpecies.some(s => selectedSpecies.has(s))) {
-      activeSpecies.push(...topSpecies.filter(s => selectedSpecies.has(s)));
+const otherLabel = document.createElement('label');
+otherLabel.setAttribute('for', 'other-species');
+otherLabel.textContent = `All Other/Unknown Species`;
+
+filterContainer.appendChild(otherCheckbox);
+filterContainer.appendChild(otherLabel);
+filterContainer.appendChild(document.createElement('br'));
+
+otherCheckbox.addEventListener('change', () => {
+  if (otherCheckbox.checked) {
+    selectedSpecies.add('__OTHER__');
+  } else {
+    selectedSpecies.delete('__OTHER__');
+  }
+  updateTreeFilter();
+});
+
+// Select/Deselect All logic
+select_all_box.addEventListener('change', () => {
+  const selectAll = select_all_box.checked;
+  Object.keys(speciesCheckboxes).forEach(species => {
+    speciesCheckboxes[species].checked = selectAll;
+    if (selectAll) {
+      selectedSpecies.add(species);
+    } else {
+      selectedSpecies.delete(species);
     }
+  });
+  updateTreeFilter();
+});
 
-    if (selectedSpecies.has('__OTHER__')) {
-      activeSpecies.push(...otherSpecies);
+// ---------------------------
+// SEARCH BAR FOR SPECIES
+// ---------------------------
+
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.toLowerCase();
+  dropdown.innerHTML = '';
+
+  if (query.length === 0) {
+    dropdown.style.display = 'none';
+    return;
+  }
+
+  const matchingSpecies = Object.keys(speciesCheckboxes).filter(species => {
+    if (species === '__OTHER__') {
+      return 'other species'.includes(query) || query.includes('other');
     }
+    return species.toLowerCase().includes(query);
+  });
 
-    const filteredFeatures = treesData.features.filter(f => {
-      const species = f.properties.Tree_species || 'Unknown';
-      return activeSpecies.includes(species);
+  if (matchingSpecies.length === 0) {
+    dropdown.style.display = 'none';
+    return;
+  }
+
+  matchingSpecies.forEach(species => {
+    const option = document.createElement('div');
+    option.textContent = option.textContent = species === '__OTHER__' ? 'All Other/Unknown Species' : species;
+    option.style.padding = '5px';
+    option.style.cursor = 'pointer';
+    option.style.borderBottom = '1px solid #eee';
+
+    option.addEventListener('click', () => {
+      speciesCheckboxes[species].checked = true;
+      selectedSpecies.add(species);
+      updateTreeFilter();
+      searchInput.value = '';
+      dropdown.style.display = 'none';
     });
 
-    const filteredGeojson = {
-      type: 'FeatureCollection',
-      features: filteredFeatures
-    };
+    dropdown.appendChild(option);
+  });
 
-    map.getSource('trees').setData(filteredGeojson);
+  dropdown.style.display = 'block';
+});
+
+// Hide dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  if (!filterContainer.contains(e.target)) {
+    dropdown.style.display = 'none';
   }
+});
+
+// Update tree filter function
+function updateTreeFilter() {
+  const activeSpecies = [];
+
+  if (topSpecies.some(s => selectedSpecies.has(s))) {
+    activeSpecies.push(...topSpecies.filter(s => selectedSpecies.has(s)));
+  }
+
+  if (selectedSpecies.has('__OTHER__')) {
+    activeSpecies.push(...otherSpecies);
+  }
+
+  const filteredFeatures = treesData.features.filter(f => {
+    const species = f.properties.Tree_species || 'Unknown';
+    return activeSpecies.includes(species);
+  });
+
+  const filteredGeojson = {
+    type: 'FeatureCollection',
+    features: filteredFeatures
+  };
+
+  map.getSource('trees').setData(filteredGeojson);
+}
+
 });
 
 // ------------------------------------------------------------------------
@@ -259,7 +347,7 @@ map.on('click', 'grid-score-fill', (e) => {
     layers: ['unclustered-point']
   });
 
-  console.log(overlappingTrees);
+  // console.log(overlappingTrees);
 
   if (overlappingTrees.length > 0){
     return;
