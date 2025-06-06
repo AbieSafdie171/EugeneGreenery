@@ -24,8 +24,11 @@
 
   <!-- This is the map div :) -->
   <div id='map'></div>
+
+  <!-- reset the map to the start button -->
   <button id="reset-zoom">Reset Zoom</button>
 
+    <!-- information panel -->
    <div class="descriptionPanel" id="descriptionPanel" style="height: 455px;">
      <span onClick="panelSelect()" id="glyph" class="chevron glyphicon glyphicon-chevron-down"></span>
      <hr />
@@ -47,6 +50,7 @@ on a 0-100 scale)
    </div>
 
 
+   <!-- Legend container and all the color bins are in-lined styled :) -->
    <div class="LegendContainer">
      <div class="legendTitle">Score: </div>
 
@@ -98,13 +102,13 @@ on a 0-100 scale)
 
 
 
-  <!-- js file -->
+  <!-- js files -->
   <script src='trees.js'></script>
   <script src='scores.js'></script>
   <script src='greenery.js'></script>
 
 
-
+  <!-- tree species selection box -->
   <div id="filters"></div>
 
  </body>

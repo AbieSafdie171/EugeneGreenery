@@ -1,13 +1,13 @@
-// Set Mapbox token
+// maobox token
 mapboxgl.accessToken = 'pk.eyJ1IjoiYXNhZmRpZSIsImEiOiJjbTh6MXZkb3AwNHdsMmpwbjl0cWE2c3N2In0.CJCiuaLVqFTE0ZjEhLzWfw';
 
-// Define bounds and map setup
+// bounds
 const bounds = [
   [-123.6580612, 43.7874626],
   [-122.650526, 44.14003163]
 ];
 
-// Base map setup
+// basemap
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/outdoors-v12',
@@ -18,10 +18,10 @@ const map = new mapboxgl.Map({
   maxBounds: bounds
 });
 
-// Add navigation control (zoom buttons, compass)
+// nav control
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-// Reset map to start position on button click
+// reset map button
 document.getElementById('reset-zoom').addEventListener('click', () => {
   map.flyTo({
     center: [-123.112355, 44.059128],
@@ -31,7 +31,7 @@ document.getElementById('reset-zoom').addEventListener('click', () => {
 });
 
 // ------------------------------------------------------------------------
-// HELPER FUNCTIONS
+// getTopSpecies helpter function
 
 function getTopSpecies(data, topN = 5) {
   const counts = {};
@@ -60,7 +60,7 @@ function getTopSpecies(data, topN = 5) {
 }
 
 // ------------------------------------------------------------------------
-// MAP LOAD EVENT
+// on map load --- add all the geojson data
 
 map.on('load', () => {
   // Add grid score source and layer
@@ -69,6 +69,7 @@ map.on('load', () => {
     data: eugene_tree_map
   });
 
+  // grid map choropleth map layer
   map.addLayer({
     id: 'grid-score-fill',
     type: 'fill',
@@ -78,7 +79,7 @@ map.on('load', () => {
         'interpolate',
         ['linear'],
         ['get', 'Score'],
-        0, '#7f001c',   // darker red
+        0, '#7f001c',   // red end
         10, '#a50026',
         20, '#da372a',
         30, '#f67b4a',
@@ -94,7 +95,7 @@ map.on('load', () => {
     }
   });
 
-  // Add trees source with clustering
+  // tree data 
   map.addSource('trees', {
     type: 'geojson',
     data: treesData,
@@ -103,7 +104,7 @@ map.on('load', () => {
     clusterRadius: 50
   });
 
-  // Clustered circles layer
+  // make the clusters
   map.addLayer({
     id: 'clusters',
     type: 'circle',
@@ -115,7 +116,7 @@ map.on('load', () => {
     }
   });
 
-  // Cluster count labels
+  // cluster count labels
   map.addLayer({
     id: 'cluster-count',
     type: 'symbol',
@@ -131,7 +132,7 @@ map.on('load', () => {
     }
   });
 
-  // Unclustered tree points
+  // individual tree points
   map.addLayer({
     id: 'unclustered-point',
     type: 'circle',
@@ -144,12 +145,16 @@ map.on('load', () => {
     }
   });
 
-  // Species filtering UI
-// Species filtering UI
-const { topSpecies, otherSpecies, counts } = getTopSpecies(treesData, 100);
-const filterContainer = document.getElementById('filters');
-const selectedSpecies = new Set();
+// --------------------------------------------------------------------------------
 
+// tree species filter panel
+
+
+const { topSpecies, otherSpecies, counts } = getTopSpecies(treesData, 100); // get top 100 species by count
+const filterContainer = document.getElementById('filters');
+const selectedSpecies = new Set();  // save the current selected species
+
+// search bar
 const searchInput = document.createElement('input');
 searchInput.type = 'text';
 searchInput.placeholder = 'Search species...';
@@ -157,6 +162,8 @@ searchInput.style.width = '100%';
 searchInput.style.marginBottom = '8px';
 searchInput.style.padding = '4px';
 
+
+// dropdown the search bar loads
 const dropdown = document.createElement('div');
 dropdown.style.maxHeight = '150px';
 dropdown.style.overflowY = 'auto';
@@ -166,10 +173,11 @@ dropdown.style.display = 'none';
 dropdown.style.position = 'relative';
 dropdown.style.zIndex = '10';
 
+// put serach and dropdown on filter panel div
 filterContainer.appendChild(searchInput);
 filterContainer.appendChild(dropdown);
 
-// --- Select/Deselect All at the top ---
+// select/deselct all button
 const select_all_box = document.createElement('input');
 select_all_box.type = 'checkbox';
 select_all_box.id = 'select-all';
@@ -180,14 +188,15 @@ const selectAllLabel = document.createElement('label');
 selectAllLabel.setAttribute('for', 'select-all');
 selectAllLabel.textContent = `Select/Deselect All`;
 
+// putss at top of panel
 filterContainer.appendChild(select_all_box);
 filterContainer.appendChild(selectAllLabel);
 filterContainer.appendChild(document.createElement('br'));
 
-// Hold references to checkboxes for toggling
+// save what is currently checked
 const speciesCheckboxes = {};
 
-// Create checkboxes for top species
+// create checkboxes for each species
 topSpecies.forEach(species => {
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
@@ -215,7 +224,7 @@ topSpecies.forEach(species => {
   });
 });
 
-// Create checkbox for "Other" species
+// checkbox for all other/unknown species
 const otherCheckbox = document.createElement('input');
 otherCheckbox.type = 'checkbox';
 otherCheckbox.id = 'other-species';
@@ -241,7 +250,7 @@ otherCheckbox.addEventListener('change', () => {
   updateTreeFilter();
 });
 
-// Select/Deselect All logic
+// select/deselcted on change listener
 select_all_box.addEventListener('change', () => {
   const selectAll = select_all_box.checked;
   Object.keys(speciesCheckboxes).forEach(species => {
@@ -255,9 +264,9 @@ select_all_box.addEventListener('change', () => {
   updateTreeFilter();
 });
 
-// ---------------------------
-// SEARCH BAR FOR SPECIES
-// ---------------------------
+
+
+// search bar input and populating the dropdown
 
 searchInput.addEventListener('input', () => {
   const query = searchInput.value.toLowerCase();
@@ -301,14 +310,14 @@ searchInput.addEventListener('input', () => {
   dropdown.style.display = 'block';
 });
 
-// Hide dropdown when clicking outside
+// hide dropdown when clicked out
 document.addEventListener('click', (e) => {
   if (!filterContainer.contains(e.target)) {
     dropdown.style.display = 'none';
   }
 });
 
-// Update tree filter function
+// updates trees on map based on what is selected
 function updateTreeFilter() {
   const activeSpecies = [];
 
@@ -336,25 +345,30 @@ function updateTreeFilter() {
 });
 
 // ------------------------------------------------------------------------
-// POPUPS AND CURSOR INTERACTIONS
+// popups
 
 // Grid score fill click popup
 map.on('click', 'grid-score-fill', (e) => {
 
   const props = e.features[0].properties;
 
+  // if we click on a tree, dont make the grid info pop up too logic
+
   const overlappingTrees = map.queryRenderedFeatures(e.point, {
     layers: ['unclustered-point']
   });
 
-  // console.log(overlappingTrees);
+  const overlappingCluster = map.queryRenderedFeatures(e.point, {
+    layers: ['clusters']
+  });
 
-  if (overlappingTrees.length > 0){
+  // console.log(overlappingTrees);
+  // console.log(overlappingCluster);
+
+  // if we clicked on another lyaer (tree/cluster) return bc we dont want to bring up the grid popup
+  if (overlappingTrees.length > 0 || overlappingCluster.length > 0){
     return;
   }
-
-  // Offset the grid popup 50px right only if a tree is also clicked
-  const offset = overlappingTrees.length > 0 ? [0, -100] : [0, 0];
 
   const popupContent = `
     <strong>Grid ID:</strong> ${props.Grid_ID || 'N/A'}<br>
@@ -367,13 +381,13 @@ map.on('click', 'grid-score-fill', (e) => {
     <strong>Score:</strong> ${props.Score ? Number(props.Score).toFixed(2) : 'N/A'}<br>
   `;
 
-  new mapboxgl.Popup({ offset })
+  new mapboxgl.Popup()
     .setLngLat(e.lngLat)
     .setHTML(popupContent)
     .addTo(map);
 });
 
-// Change cursor to pointer on grid fill hover
+// change cursor to pointer on grid fill hover
 map.on('mouseenter', 'grid-score-fill', () => {
   map.getCanvas().style.cursor = 'pointer';
 });
@@ -381,7 +395,7 @@ map.on('mouseleave', 'grid-score-fill', () => {
   map.getCanvas().style.cursor = '';
 });
 
-// Change cursor to pointer on cluster hover
+// change cursor to pointer on cluster hover
 map.on('mouseenter', 'clusters', () => {
   map.getCanvas().style.cursor = 'pointer';
 });
@@ -389,7 +403,7 @@ map.on('mouseleave', 'clusters', () => {
   map.getCanvas().style.cursor = '';
 });
 
-// Zoom into cluster on click
+// zoom when cluster is clicked
 map.on('click', 'clusters', (e) => {
   const features = map.queryRenderedFeatures(e.point, {
     layers: ['clusters']
@@ -406,7 +420,7 @@ map.on('click', 'clusters', (e) => {
   });
 });
 
-// Show data popup when clicking unclustered tree points
+// show data popup when clicking tree point
 map.on('click', 'unclustered-point', (e) => {
   const feature = e.features[0];
   const props = feature.properties;
@@ -424,7 +438,7 @@ map.on('click', 'unclustered-point', (e) => {
 
 });
 
-// Change cursor on unclustered tree points hover
+// chagng cursor on unclustered tree points hover
 map.on('mouseenter', 'unclustered-point', () => {
   map.getCanvas().style.cursor = 'pointer';
 });
@@ -432,6 +446,10 @@ map.on('mouseleave', 'unclustered-point', () => {
   map.getCanvas().style.cursor = '';
 });
 
+// -------------------------------------------------------
+
+
+// Descroption panel. Code logic taken from assignment 3
 var state = { panelOpen: true };
 
 // defines a function that closes or opens the panel based on its current state
@@ -446,3 +464,5 @@ function panelSelect(e){
       state.panelOpen = true;
     }
 }
+
+
