@@ -36,12 +36,12 @@ body {
 }
 
 .mapboxgl-ctrl-compass {
-    display: none !important; /* Use !important to ensure it overrides other styles */
+    display: none !important; 
 }
 
 .mapboxgl-ctrl {
-    background-color: #44a04c;  /* green */
-    border-radius: 5px; /* Rounded edges */
+    background-color: #44a04c; 
+    border-radius: 5px; 
 }
 
 
