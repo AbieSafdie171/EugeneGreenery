@@ -206,4 +206,14 @@ body {
   border-top-color: #44a04c; 
 }
 
+.custom-dropdown {
+  max-height: 150px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  display: none;
+  position: relative;
+  z-index: 10;
+}
+
 

@@ -33,7 +33,7 @@ document.getElementById('reset-zoom').addEventListener('click', () => {
 // ------------------------------------------------------------------------
 // getTopSpecies helpter function
 
-function getTopSpecies(data, topN = 5) {
+function getTopSpecies(data, topN) {
   const counts = {};
 
   // Count species occurrences, normalize empty or null to "Unknown"
@@ -165,13 +165,7 @@ searchInput.style.padding = '4px';
 
 // dropdown the search bar loads
 const dropdown = document.createElement('div');
-dropdown.style.maxHeight = '150px';
-dropdown.style.overflowY = 'auto';
-dropdown.style.background = '#fff';
-dropdown.style.border = '1px solid #ccc';
-dropdown.style.display = 'none';
-dropdown.style.position = 'relative';
-dropdown.style.zIndex = '10';
+dropdown.className = 'custom-dropdown';
 
 // put serach and dropdown on filter panel div
 filterContainer.appendChild(searchInput);
